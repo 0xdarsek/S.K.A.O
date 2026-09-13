@@ -14,6 +14,10 @@ namespace SKAO.web
         {
             RegisterJQueryScriptManager();
 
+            bundles.Add(new StyleBundle("~/bundles/css").Include(
+                "~/Content/bootstrap.css",
+                "~/Content/Site.css"));
+
             bundles.Add(new ScriptBundle("~/bundles/WebFormsJs").Include(
                             "~/Scripts/WebForms/WebForms.js",
                             "~/Scripts/WebForms/WebUIValidation.js",

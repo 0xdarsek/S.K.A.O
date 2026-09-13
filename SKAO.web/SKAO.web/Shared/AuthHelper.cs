@@ -1,0 +1,2 @@
+﻿using System.Web;
+namespace SKAO.web.Shared { public static class AuthHelper { public static bool IsLoggedIn() { return HttpContext.Current.Session["UserID"] != null; } public static bool IsAdmin() { return IsLoggedIn() && HttpContext.Current.Session["Role"] != null && HttpContext.Current.Session["Role"].ToString() == "Admin"; } public static int GetUserID() { return IsLoggedIn() ? (int)HttpContext.Current.Session["UserID"] : 0; } } }
