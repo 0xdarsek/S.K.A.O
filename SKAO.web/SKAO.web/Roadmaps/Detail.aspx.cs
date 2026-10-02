@@ -77,7 +77,7 @@ namespace SKAO.web.Roadmaps
             using (SqlConnection conn = new SqlConnection(connStr))
             {
                 string query =
-                    "SELECT c.CertID, c.CertName, c.Provider, c.Level, c.Description, " +
+                    "SELECT c.CertID, c.CertName, c.Provider, c.Level, c.Description, c.Website, " +
                     "       pc.StepOrder, up.Status AS MyStatus " +
                     "FROM PathCertifications pc " +
                     "JOIN Certifications c ON pc.CertID = c.CertID " +
@@ -131,20 +131,31 @@ namespace SKAO.web.Roadmaps
 
             if (string.IsNullOrEmpty(status))
             {
-                lblStatus.Text = "<span class='badge bg-light text-dark'>Not enrolled</span>";
+                lblStatus.Text = "<span class='rm-badge rm-stat-none'>Not enrolled</span>";
                 // Only Enrol makes sense before the member has a progress row.
                 btnComplete.Visible = false;
                 btnUnenrol.Visible = false;
             }
             else
             {
-                string css = status == "Completed" ? "bg-success" :
-                             status == "InProgress" ? "bg-warning text-dark" : "bg-secondary";
-                lblStatus.Text = "<span class='badge " + css + "'>" + FriendlyStatus(status) + "</span>";
+                lblStatus.Text = "<span class='rm-badge rm-stat-" + status + "'>" + FriendlyStatus(status) + "</span>";
                 btnEnrol.Visible = false;                       // already enrolled
                 btnComplete.Visible = status != "Completed";    // hide once done
                 btnUnenrol.Visible = true;
             }
+        }
+
+        /// <summary>
+        /// Renders the certification's official website as a link (or nothing when
+        /// no URL is stored). Used by Detail.aspx to satisfy the "links" requirement.
+        /// </summary>
+        protected string CertLink(object website)
+        {
+            if (website == null || website == DBNull.Value) return "";
+            string url = website.ToString().Trim();
+            if (string.IsNullOrEmpty(url)) return "";
+            string safe = Server.HtmlEncode(url);
+            return "<a class='rm-link' href='" + safe + "' target='_blank' rel='noopener'>Official page &#8599;</a>";
         }
 
         private static string FriendlyStatus(string status)
@@ -206,7 +217,7 @@ namespace SKAO.web.Roadmaps
 
                 if ((int)check.ExecuteScalar() > 0)
                 {
-                    lblMessage.Text = "<span class='text-warning'>You are already enrolled in that certification.</span>";
+                    lblMessage.Text = "<div class='rm-note rm-note--warn'>You are already enrolled in that certification.</div>";
                     return;
                 }
 
@@ -217,7 +228,7 @@ namespace SKAO.web.Roadmaps
                 cmd.Parameters.AddWithValue("@CertID", certId);
                 cmd.ExecuteNonQuery();
 
-                lblMessage.Text = "<span class='text-success'>Enrolled. Certification added to your progress.</span>";
+                lblMessage.Text = "<div class='rm-note rm-note--ok'>Enrolled. Certification added to your progress.</div>";
             }
         }
 
@@ -236,8 +247,8 @@ namespace SKAO.web.Roadmaps
 
                 int affected = cmd.ExecuteNonQuery();
                 lblMessage.Text = affected > 0
-                    ? "<span class='text-success'>Progress updated to " + FriendlyStatus(newStatus) + ".</span>"
-                    : "<span class='text-warning'>Enrol first, then you can update your status.</span>";
+                    ? "<div class='rm-note rm-note--ok'>Progress updated to " + FriendlyStatus(newStatus) + ".</div>"
+                    : "<div class='rm-note rm-note--warn'>Enrol first, then you can update your status.</div>";
             }
         }
 
@@ -253,7 +264,7 @@ namespace SKAO.web.Roadmaps
                 cmd.Parameters.AddWithValue("@CertID", certId);
                 cmd.ExecuteNonQuery();
 
-                lblMessage.Text = "<span class='text-secondary'>Unenrolled. Certification removed from your progress.</span>";
+                lblMessage.Text = "<div class='rm-note rm-note--muted'>Unenrolled. Certification removed from your progress.</div>";
             }
         }
 

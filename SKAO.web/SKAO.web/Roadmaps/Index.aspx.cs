@@ -20,6 +20,19 @@ namespace SKAO.web.Roadmaps
         }
 
         /// <summary>
+        /// Returns a usable image URL for a path card. Uses the CareerPaths.ImageUrl
+        /// value when present, and falls back to a default banner otherwise.
+        /// </summary>
+        protected string ImgSrc(object imageUrl)
+        {
+            string url = imageUrl == null || imageUrl == DBNull.Value ? "" : imageUrl.ToString().Trim();
+            if (string.IsNullOrEmpty(url))
+                return ResolveUrl("~/Assets/img/pentest.png");
+            // Stored as an app-relative path (e.g. ~/Assets/img/soc.png).
+            return url.StartsWith("~") ? ResolveUrl(url) : url;
+        }
+
+        /// <summary>
         /// Reads every career path from the CareerPaths table and binds the
         /// repeater so one card is rendered per path.
         /// </summary>

@@ -2,89 +2,90 @@
 
 <asp:Content ID="RoadmapDetailContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <main aria-labelledby="pathTitle">
+    <%-- External CSS --%>
+    <link rel="stylesheet" href="../Assets/roadmaps.css" />
 
-        <!-- Path header (filled from CareerPaths in code-behind) -->
-        <div class="p-4 mb-4 bg-light rounded-3">
-            <h2 id="pathTitle"><asp:Label ID="lblPathName" runat="server" /></h2>
-            <p class="lead mb-3"><asp:Label ID="lblPathDesc" runat="server" /></p>
-            <asp:HyperLink ID="lnkQuiz" runat="server" CssClass="btn btn-success">
-                Take the Self-Assessment Quiz
-            </asp:HyperLink>
-            <a href="Index.aspx" class="btn btn-outline-secondary">&larr; All Paths</a>
-        </div>
+    <main class="rm-wrap" aria-labelledby="pathTitle">
 
-        <!-- Status / feedback message -->
-        <asp:Label ID="lblMessage" runat="server" CssClass="d-block mb-3" />
-
-        <!-- Prompt shown to visitors who are not logged in -->
-        <asp:Panel ID="pnlLoginNotice" runat="server" Visible="false"
-                   CssClass="alert alert-info">
-            <a href="../Member/Login.aspx">Log in</a> to enrol in a certification and track your progress.
-        </asp:Panel>
-
-        <h3 class="mb-3">Certification Roadmap</h3>
-
-        <!-- Ordered list of certifications on this path -->
-        <asp:Repeater ID="rptRoadmap" runat="server" OnItemCommand="rptRoadmap_ItemCommand"
-                      OnItemDataBound="rptRoadmap_ItemDataBound">
-            <ItemTemplate>
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <h5 class="card-title">
-                                <span class="badge bg-secondary me-2">Step <%# Eval("StepOrder") %></span>
-                                <%# Server.HtmlEncode(Eval("CertName").ToString()) %>
-                            </h5>
-                            <span class="badge bg-info text-dark"><%# Eval("Level") %></span>
-                        </div>
-                        <h6 class="card-subtitle mb-2 text-muted">
-                            Provider: <%# Server.HtmlEncode(Eval("Provider") == null ? "-" : Eval("Provider").ToString()) %>
-                        </h6>
-                        <p class="card-text"><%# Server.HtmlEncode(Eval("Description") == null ? "" : Eval("Description").ToString()) %></p>
-
-                        <!-- Current progress status for the logged-in member -->
-                        <p class="mb-2">
-                            <strong>Your status:</strong>
-                            <asp:Label ID="lblStatus" runat="server" />
-                        </p>
-
-                        <!-- Member actions: Insert (Enrol), Update (Mark Completed), Delete (Unenrol) -->
-                        <asp:Panel ID="pnlActions" runat="server" Visible="false">
-                            <asp:Button ID="btnEnrol" runat="server" CssClass="btn btn-sm btn-primary"
-                                        Text="Enrol" CommandName="Enrol"
-                                        CommandArgument='<%# Eval("CertID") %>' />
-                            <asp:Button ID="btnComplete" runat="server" CssClass="btn btn-sm btn-outline-success"
-                                        Text="Mark Completed" CommandName="Complete"
-                                        CommandArgument='<%# Eval("CertID") %>' />
-                            <asp:Button ID="btnUnenrol" runat="server" CssClass="btn btn-sm btn-outline-danger"
-                                        Text="Unenrol" CommandName="Unenrol"
-                                        CommandArgument='<%# Eval("CertID") %>' />
-                        </asp:Panel>
-                    </div>
+        <!-- Path header -->
+        <section class="rm-hero">
+            <div class="rm-container">
+                <p class="rm-eyebrow">Certification Roadmap</p>
+                <h1 id="pathTitle"><asp:Label ID="lblPathName" runat="server" /></h1>
+                <p><asp:Label ID="lblPathDesc" runat="server" /></p>
+                <div style="margin-top:20px;">
+                    <asp:HyperLink ID="lnkQuiz" runat="server" CssClass="rm-btn rm-btn--primary">
+                        Take the Self-Assessment Quiz
+                    </asp:HyperLink>
+                    <a href="Index.aspx" class="rm-btn rm-btn--light">&larr; All Paths</a>
                 </div>
-            </ItemTemplate>
-        </asp:Repeater>
+            </div>
+        </section>
 
-        <asp:Label ID="lblNoCerts" runat="server" CssClass="text-muted" Visible="false"
-                   Text="This path does not have any certifications mapped yet." />
+        <div class="rm-container">
 
-        <!-- Multimedia section: certification overview videos pulled from the Resources table -->
-        <asp:Panel ID="pnlMedia" runat="server" Visible="false">
-            <h3 class="mt-4 mb-3">Overview Videos</h3>
-            <asp:Repeater ID="rptMedia" runat="server">
+            <!-- feedback + login notice -->
+            <asp:Label ID="lblMessage" runat="server" />
+            <asp:Panel ID="pnlLoginNotice" runat="server" Visible="false" CssClass="rm-note rm-note--info">
+                <a href="../Member/Login.aspx">Log in</a> to enrol in a certification and track your progress.
+            </asp:Panel>
+
+            <h2 class="rm-section-title">Your Certification Roadmap</h2>
+
+            <asp:Repeater ID="rptRoadmap" runat="server" OnItemCommand="rptRoadmap_ItemCommand"
+                          OnItemDataBound="rptRoadmap_ItemDataBound">
                 <ItemTemplate>
-                    <div class="mb-4">
-                        <h6><%# Server.HtmlEncode(Eval("Title").ToString()) %>
-                            <small class="text-muted">(<%# Eval("CertName") %>)</small></h6>
-                        <div class="ratio ratio-16x9" style="max-width:640px;">
-                            <iframe src='<%# Eval("Url") %>' title='<%# Server.HtmlEncode(Eval("Title").ToString()) %>'
-                                    allowfullscreen></iframe>
+                    <div class="rm-step">
+                        <div class="rm-step__no"><%# Eval("StepOrder") %></div>
+                        <div class="rm-step__head">
+                            <h3 class="rm-step__name"><%# Server.HtmlEncode(Eval("CertName").ToString()) %></h3>
+                            <span class='rm-badge rm-lvl-<%# Eval("Level") %>'><%# Eval("Level") %></span>
                         </div>
+                        <p class="rm-step__provider">Provider: <%# Server.HtmlEncode(Eval("Provider") == DBNull.Value ? "-" : Eval("Provider").ToString()) %></p>
+                        <p class="rm-step__desc"><%# Server.HtmlEncode(Eval("Description") == DBNull.Value ? "" : Eval("Description").ToString()) %></p>
+
+                        <div class="rm-step__meta">
+                            <%# CertLink(Eval("Website")) %>
+                            <span>Your status: <asp:Label ID="lblStatus" runat="server" /></span>
+                        </div>
+
+                        <asp:Panel ID="pnlActions" runat="server" Visible="false" CssClass="rm-actions">
+                            <asp:Button ID="btnEnrol" runat="server" CssClass="rm-btn rm-btn--primary rm-btn--sm"
+                                        Text="Enrol" CommandName="Enrol" CommandArgument='<%# Eval("CertID") %>' />
+                            <asp:Button ID="btnComplete" runat="server" CssClass="rm-btn rm-btn--ok rm-btn--sm"
+                                        Text="Mark Completed" CommandName="Complete" CommandArgument='<%# Eval("CertID") %>' />
+                            <asp:Button ID="btnUnenrol" runat="server" CssClass="rm-btn rm-btn--danger rm-btn--sm"
+                                        Text="Unenrol" CommandName="Unenrol" CommandArgument='<%# Eval("CertID") %>' />
+                        </asp:Panel>
                     </div>
                 </ItemTemplate>
             </asp:Repeater>
-        </asp:Panel>
+
+            <asp:Label ID="lblNoCerts" runat="server" CssClass="rm-empty" Visible="false"
+                       Text="This path does not have any certifications mapped yet." />
+
+            <!-- Multimedia: overview videos from the Resources table -->
+            <asp:Panel ID="pnlMedia" runat="server" Visible="false">
+                <h2 class="rm-section-title">Overview Videos</h2>
+                <asp:Repeater ID="rptMedia" runat="server">
+                    <ItemTemplate>
+                        <div class="rm-video">
+                            <h4><%# Server.HtmlEncode(Eval("Title").ToString()) %>
+                                <small>&mdash; <%# Eval("CertName") %></small></h4>
+                            <div class="rm-ratio">
+                                <iframe src='<%# Eval("Url") %>' title='<%# Server.HtmlEncode(Eval("Title").ToString()) %>'
+                                        allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </ItemTemplate>
+                </asp:Repeater>
+            </asp:Panel>
+
+            <p class="rm-backbar">
+                <a href="Index.aspx" class="rm-btn rm-btn--ghost">&larr; Back to All Paths</a>
+            </p>
+
+        </div>
 
     </main>
 

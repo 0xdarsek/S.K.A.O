@@ -2,52 +2,65 @@
 
 <asp:Content ID="QuizContent" ContentPlaceHolderID="MainContent" runat="server">
 
-    <main aria-labelledby="quizTitle">
+    <%-- External CSS --%>
+    <link rel="stylesheet" href="../Assets/roadmaps.css" />
 
-        <div class="p-4 mb-4 bg-light rounded-3">
-            <h2 id="quizTitle"><asp:Label ID="lblQuizTitle" runat="server" Text="Self-Assessment Quiz" /></h2>
-            <p class="lead mb-0">Answer each question, then submit to see your score.</p>
+    <%-- Internal CSS: a small page-specific tweak on top of the external stylesheet --%>
+    <style>
+        .rm-progress-hint { color:#c7d2e0; font-size:.9rem; margin-top:12px; }
+    </style>
+
+    <main class="rm-wrap" aria-labelledby="quizTitle">
+
+        <section class="rm-hero">
+            <div class="rm-container">
+                <p class="rm-eyebrow">Self-Assessment</p>
+                <h1 id="quizTitle"><asp:Label ID="lblQuizTitle" runat="server" Text="Self-Assessment Quiz" /></h1>
+                <p>Answer each question, then submit to see your score.</p>
+                <p class="rm-progress-hint">Tip: log in before you start so your score is saved to your account.</p>
+            </div>
+        </section>
+
+        <div class="rm-container">
+
+            <asp:Label ID="lblMessage" runat="server" />
+
+            <div style="margin-top:26px;">
+                <asp:Panel ID="pnlQuiz" runat="server">
+                    <asp:Repeater ID="rptQuestions" runat="server" OnItemDataBound="rptQuestions_ItemDataBound">
+                        <ItemTemplate>
+                            <div class="rm-q">
+                                <asp:HiddenField ID="hdnQuestionID" runat="server" Value='<%# Eval("QuestionID") %>' />
+                                <p class="rm-q__text">
+                                    <%# Container.ItemIndex + 1 %>.
+                                    <%# Server.HtmlEncode(Eval("QuestionText").ToString()) %>
+                                </p>
+                                <asp:RadioButtonList ID="rblOptions" runat="server" CssClass="rm-options" />
+                            </div>
+                        </ItemTemplate>
+                    </asp:Repeater>
+
+                    <asp:Button ID="btnSubmit" runat="server" CssClass="rm-btn rm-btn--primary"
+                                Text="Submit Answers" OnClick="btnSubmit_Click" />
+                </asp:Panel>
+
+                <asp:Panel ID="pnlResult" runat="server" Visible="false" CssClass="rm-result">
+                    <h3>Quiz complete</h3>
+                    <p class="rm-score"><asp:Label ID="lblScore" runat="server" /></p>
+                    <small><asp:Label ID="lblSaveNote" runat="server" /></small>
+                </asp:Panel>
+
+                <asp:Label ID="lblNoQuiz" runat="server" Visible="false" CssClass="rm-empty"
+                           Text="There is no quiz available for this path yet." />
+            </div>
+
+            <p class="rm-backbar">
+                <asp:HyperLink ID="lnkBack" runat="server" CssClass="rm-btn rm-btn--ghost">
+                    &larr; Back to Roadmap
+                </asp:HyperLink>
+            </p>
+
         </div>
-
-        <asp:Label ID="lblMessage" runat="server" CssClass="d-block mb-3" />
-
-        <!-- The quiz form: one question block per row in QuizQuestions -->
-        <asp:Panel ID="pnlQuiz" runat="server">
-            <asp:Repeater ID="rptQuestions" runat="server" OnItemDataBound="rptQuestions_ItemDataBound">
-                <ItemTemplate>
-                    <div class="card mb-3 shadow-sm">
-                        <div class="card-body">
-                            <asp:HiddenField ID="hdnQuestionID" runat="server"
-                                             Value='<%# Eval("QuestionID") %>' />
-                            <p class="fw-bold mb-2">
-                                <%# Container.ItemIndex + 1 %>.
-                                <%# Server.HtmlEncode(Eval("QuestionText").ToString()) %>
-                            </p>
-                            <asp:RadioButtonList ID="rblOptions" runat="server" CssClass="ms-3" />
-                        </div>
-                    </div>
-                </ItemTemplate>
-            </asp:Repeater>
-
-            <asp:Button ID="btnSubmit" runat="server" CssClass="btn btn-primary"
-                        Text="Submit Answers" OnClick="btnSubmit_Click" />
-        </asp:Panel>
-
-        <!-- Result panel, shown after submission -->
-        <asp:Panel ID="pnlResult" runat="server" Visible="false" CssClass="alert alert-success mt-3">
-            <h4 class="alert-heading">Quiz complete</h4>
-            <p class="mb-0 fs-5"><asp:Label ID="lblScore" runat="server" /></p>
-            <asp:Label ID="lblSaveNote" runat="server" CssClass="d-block mt-2 small" />
-        </asp:Panel>
-
-        <asp:Label ID="lblNoQuiz" runat="server" Visible="false" CssClass="text-muted"
-                   Text="There is no quiz available for this path yet." />
-
-        <p class="mt-3">
-            <asp:HyperLink ID="lnkBack" runat="server" CssClass="btn btn-outline-secondary">
-                &larr; Back to Roadmap
-            </asp:HyperLink>
-        </p>
 
     </main>
 
