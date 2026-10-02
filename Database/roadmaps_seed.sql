@@ -16,6 +16,23 @@ USE SKAODB;
 GO
 
 -- ---------------------------------------------------------
+-- 0) Banner images for each path + official websites for each cert
+--    (UPDATEs are safe to re-run.)
+-- ---------------------------------------------------------
+UPDATE CareerPaths SET ImageUrl = N'~/Assets/img/pentest.png' WHERE PathName = 'Penetration Tester';
+UPDATE CareerPaths SET ImageUrl = N'~/Assets/img/redteam.png' WHERE PathName = 'Red Team Operator';
+UPDATE CareerPaths SET ImageUrl = N'~/Assets/img/soc.png'     WHERE PathName = 'SOC Analyst';
+UPDATE CareerPaths SET ImageUrl = N'~/Assets/img/hunter.png'  WHERE PathName = 'Threat Hunter';
+
+UPDATE Certifications SET Website = N'https://www.comptia.org/certifications/security'                               WHERE CertName = 'CompTIA Security+';
+UPDATE Certifications SET Website = N'https://security.ine.com/certifications/ejpt-certification/'                   WHERE CertName = 'eJPT';
+UPDATE Certifications SET Website = N'https://www.offsec.com/courses/pen-200/'                                      WHERE CertName = 'OSCP';
+UPDATE Certifications SET Website = N'https://www.giac.org/certifications/certified-incident-handler-gcih/'         WHERE CertName = 'GCIH';
+UPDATE Certifications SET Website = N'https://www.eccouncil.org/train-certify/certified-ethical-hacker-ceh/'        WHERE CertName = 'CEH';
+UPDATE Certifications SET Website = N'https://www.giac.org/certifications/cyber-threat-intelligence-gcti/'          WHERE CertName = 'GCTI';
+GO
+
+-- ---------------------------------------------------------
 -- 1) Red Team Operator path roadmap (PathID = 2)
 --    CertIDs from the base seed: 1=Security+, 3=OSCP, 5=CEH
 -- ---------------------------------------------------------
